@@ -109,7 +109,7 @@ class Company(models.Model):
 class CompanyTeacher(models.Model):
     cot_id = models. OneToOneField('User', on_delete=models.CASCADE, verbose_name='企业导师ID', primary_key=True)
     co_id = models.ForeignKey('Company', on_delete=models.CASCADE, verbose_name='企业ID',null=True, blank=True)
-    act_id = models.ForeignKey('IpActivity',on_delete=models.CASCADE,null=True, blank=True, verbose_name='管理的实习活动id')
+    act_id = models.ForeignKey('IpActivity',on_delete=models.CASCADE,null=True, blank=True, verbose_name='管理的实习活动ID')
     cot_title = models.CharField(max_length=45, verbose_name='职称/头衔')
 
     class Meta:
