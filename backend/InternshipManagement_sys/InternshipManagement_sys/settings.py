@@ -17,6 +17,8 @@ from tutorial.settings import BASE_DIR
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#注册自定义用户模型，格式：“应用名.模型类名”
+AUTH_USER_MODEL = 'my_app.User'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -41,6 +43,8 @@ INSTALLED_APPS = [
     'my_app.apps.MyAppConfig',
     'rest_framework',
     'corsheaders',
+    # 'my_app',
+    #'users',
 ]
 
 MIDDLEWARE = [
@@ -83,9 +87,9 @@ WSGI_APPLICATION = 'InternshipManagement_sys.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'IMS',
+        'NAME': 'sims_django',
         'USER': 'root',
-        'PASSWORD':'root',
+        'PASSWORD':'mysqlGzy@',
         'HOST':'localhost',
         'PORT':'3306',
     }

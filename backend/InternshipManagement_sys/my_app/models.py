@@ -1,17 +1,19 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
+# from users.models import User
 # Create your models here.
 # Academy Model (for the 'academy' table)
 
 # 用户表 User Model
-class User(models.Model):
+#注释的为AbstractUser默认属性
+class User(AbstractUser):
     u_id = models.IntegerField(primary_key=True, verbose_name='用户ID')
-    u_name = models.CharField(max_length=20, verbose_name='用户名（姓名）')
-    u_password = models.CharField(max_length=20, default='123456', verbose_name='密码')
+    # username = models.USERNMEE(max_length=20, verbose_name='用户名（姓名）')
+    # password = models.CharField(max_length=20, default='123456', verbose_name='密码')
     u_type = models.IntegerField(verbose_name='用户类型', choices=[(0, '管理员'), (1, '学生'), (2, '班主任'), (3, '企业导师')])
-    u_tel = models.CharField(max_length=11, null=True, blank=True, verbose_name='电话')
+    u_tel = models.CharField(max_length=11, unique=True, verbose_name='电话')
     u_photo = models.BinaryField(null=True, blank=True, verbose_name='照片')
-    u_status = models.IntegerField(default=0, verbose_name='激活状态，0为未激活，1为已激活')
+    # is_active = models.IntegerField(default=0, verbose_name='激活状态，0为未激活，1为已激活')
 
     class Meta:
         db_table = 'user'
