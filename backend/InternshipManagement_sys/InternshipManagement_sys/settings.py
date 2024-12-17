@@ -87,9 +87,9 @@ WSGI_APPLICATION = 'InternshipManagement_sys.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sims_django',
+        'NAME': 'IMS',
         'USER': 'root',
-        'PASSWORD':'mysqlGzy@',
+        'PASSWORD':'root',
         'HOST':'localhost',
         'PORT':'3306',
     }

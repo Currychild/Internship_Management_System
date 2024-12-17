@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import check_password
 from django.shortcuts import render, HttpResponse
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
@@ -47,7 +48,7 @@ class LoginView(APIView):
                 return Response({"message": "Invalid username or password"}, status = status.HTTP_400_BAD_REQUEST)
 
             # 3.验证密码：
-            if user.u_password == u_password:
+            if check_password(u_password,user.password):
                 # 登陆成功
                 return Response({"message":"Login successful", "success":True}, status = status.HTTP_200_OK)
             else:
