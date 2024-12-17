@@ -17,10 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 # from rest_framework.documentation import include_docs_urls
 
 from my_app import views
-from my_app.views import LoginView
+from my_app.views import LoginView, StudentViewSet
 
 #配置路由器
 router = DefaultRouter()
@@ -28,12 +29,16 @@ router = DefaultRouter()
 router.register(r'users',views.UserViewSet)
 router.register(r'teachers',views.TeacherInfoViewSet)
 router.register(r'companyteachers',views.CompanyTeacherViewSet)
-
+router.register(r'students', StudentViewSet, basename='student')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('login/', LoginView.as_view(), name='login'),
+    path('admin/', admin.site.urls), # django后端管理
+    path('login/', LoginView.as_view(), name='login'), # 登录功能
     # path(r'^docs/',include_docs_urls(title='My API title'))
+    path('api/', include(router.urls)), # 加载前面配置的路由器
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # 获取 JWT token
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # 刷新 JWT token
 ]
 
-urlpatterns += router.urls
+
+# urlpatterns += router.urls

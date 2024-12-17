@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
     """用户数据序列化器"""
     class Meta:
         model = User
-        fields = ['u_id', 'u_password', 'u_type', 'u_tel', 'u_photo', 'u_status']
+        fields = ['u_id', 'u_name', 'u_type', 'u_tel', 'u_photo', 'u_status']
 
     def get_u_photo(self,obj):
         #将二进制图像数据转为 Base64 编码字符串
@@ -54,10 +54,12 @@ class ClassInfoSerializer(serializers.ModelSerializer):
 
 class StudentInfoSerializer(serializers.ModelSerializer):
     """学生信息序列化器"""
+    user = UserSerializer(source= 's_id') #嵌套User序列化器
+    c_id = serializers.StringRelatedField() #显示班级名称等相关字段
 
     class Meta:
         model = Student
-        fields = '__all__'
+        fields = ['s_grade', 's_state', 'user', 'c_id']
 
 class AnnouncementSerializer(serializers.ModelSerializer):
     """公告序列化器"""
