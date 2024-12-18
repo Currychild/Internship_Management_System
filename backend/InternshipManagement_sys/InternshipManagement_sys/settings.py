@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'my_app.apps.MyAppConfig',
     'rest_framework',
+    'drf_yasg',
     'rest_framework_simplejwt',
     'corsheaders',
     #'my_app',
@@ -120,11 +121,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # 设置 REST Framework 使用的认证方式
 REST_FRAMEWORK = {
+     'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # 使用JWT认证
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # 只有已认证的用户可以访问
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
     ],
 }
 
