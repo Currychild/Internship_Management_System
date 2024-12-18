@@ -146,6 +146,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['u_type'] = user.u_type
         return data
 
+class TokenResponseSerializer(serializers.Serializer):
+    access = serializers.CharField()
+    refresh = serializers.CharField()
+    u_id = serializers.IntegerField()
+    username = serializers.CharField()
+    u_type = serializers.IntegerField()
+
+
 #登录信息匹配序列化器
 # class LoginSerializer(serializers.ModelSerializer):
 #     "登录序列化器"

@@ -14,10 +14,14 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from my_app.serializers import UserSerializer, TeacherInfoSerializer, CompanyTeacherSerializer, \
-    CustomTokenObtainPairSerializer
+    CustomTokenObtainPairSerializer, TokenResponseSerializer
 
 from .models import Academy, Major, Teacher, Class, Student, Announcement, Company
 from .models import CompanyTeacher, IpActivity, IpApplication, IpJob, IpSummary, IpWeekly, User
+
+# api接口文档
+from drf_yasg.utils import swagger_auto_schema
+
 # Create your views here.
 
 
@@ -39,6 +43,14 @@ class CompanyTeacherViewSet(viewsets.ModelViewSet):
 class CustomTokenObtainPairView(TokenObtainPairView):
     """引用自定义的token序列化器"""
     serializer_class = CustomTokenObtainPairSerializer
+
+    @swagger_auto_schema(
+        request_body=CustomTokenObtainPairSerializer,  # 请求示例
+        responses={200: TokenResponseSerializer()}  # 响应示例
+    )
+    def post(self, request, *args, **kwargs):
+        # 不重写函数逻辑，继承父类行为即可
+        return super().post(request,*args, **kwargs)
 
 
 
