@@ -11,8 +11,10 @@ from rest_framework.decorators import action
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
-from my_app.serializers import UserSerializer, TeacherInfoSerializer, CompanyTeacherSerializer
+from my_app.serializers import UserSerializer, TeacherInfoSerializer, CompanyTeacherSerializer, \
+    CustomTokenObtainPairSerializer
 
 from .models import Academy, Major, Teacher, Class, Student, Announcement, Company
 from .models import CompanyTeacher, IpActivity, IpApplication, IpJob, IpSummary, IpWeekly, User
@@ -33,41 +35,49 @@ class CompanyTeacherViewSet(viewsets.ModelViewSet):
     queryset = CompanyTeacher.objects.all()
     serializer_class = CompanyTeacherSerializer
 
-from .serializers import LoginSerializer
-class LoginView(APIView):
-    def post(self, request):
-        # 1.反序列化前端传递的数据
-        serializer = LoginSerializer(data=request.data)
 
-        if serializer.is_valid():
-            u_id = serializer.validated_data['u_id']
-            u_password = serializer.validated_data['u_password']
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """引用自定义的token序列化器"""
+    serializer_class = CustomTokenObtainPairSerializer
 
-            # 2.查找数据库相应信息
-            try:
-                user = User.objects.get(u_id=u_id)
-            except User.DoesNotExist:
-                return Response({"message": "Invalid username or password"}, status = status.HTTP_400_BAD_REQUEST)
 
-            # 3.验证密码：
-            if check_password(u_password,user.u_password):
-                # 生成 JWT Token
-                refresh = AccessToken.for_user(user) # 为用户生成JWT的 Refresh Token
-                access_token = str(refresh.access_token) # 获取 Access Token
 
-                #返回 Token 给前端
-                return Response({
-                    "message": "Login successful",
-                    "success": True,
-                    "access_token": access_token,
-                    "refresh_token": str(refresh),
-                }, status=status.HTTP_200_OK)
-            else:
-                # 密码错误
-                return Response({"message": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            # 序列化数据不合法
-            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+"""旧登录后端"""
+# from .serializers import LoginSerializer
+# class LoginView(APIView):
+#     def post(self, request):
+#         # 1.反序列化前端传递的数据
+#         serializer = LoginSerializer(data=request.data)
+#
+#         if serializer.is_valid():
+#             u_id = serializer.validated_data['u_id']
+#             u_password = serializer.validated_data['u_password']
+#
+#             # 2.查找数据库相应信息
+#             try:
+#                 user = User.objects.get(u_id=u_id)
+#             except User.DoesNotExist:
+#                 return Response({"message": "Invalid username or password"}, status = status.HTTP_400_BAD_REQUEST)
+#
+#             # 3.验证密码：
+#             if check_password(u_password,user.password):
+#                 # 生成 JWT Token
+#                 refresh = AccessToken.for_user(user) # 为用户生成JWT的 Refresh Token
+#                 access_token = str(refresh.access_token) # 获取 Access Token
+#
+#                 #返回 Token 给前端
+#                 return Response({
+#                     "message": "Login successful",
+#                     "success": True,
+#                     "access_token": access_token,
+#                     "refresh_token": str(refresh),
+#                 }, status=status.HTTP_200_OK)
+#             else:
+#                 # 密码错误
+#                 return Response({"message": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             # 序列化数据不合法
+#             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
 from .serializers import StudentInfoSerializer

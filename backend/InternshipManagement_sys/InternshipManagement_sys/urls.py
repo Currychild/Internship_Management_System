@@ -21,7 +21,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 # from rest_framework.documentation import include_docs_urls
 
 from my_app import views
-from my_app.views import LoginView, StudentViewSet
+from my_app.views import StudentViewSet
+# from my_app.views import LoginView
 
 #配置路由器
 router = DefaultRouter()
@@ -33,7 +34,9 @@ router.register(r'students', StudentViewSet, basename='student')
 
 urlpatterns = [
     path('admin/', admin.site.urls), # django后端管理
-    path('login/', LoginView.as_view(), name='login'), # 登录功能
+
+    # path('login/', LoginView.as_view(), name='login'), # 登录功能
+
     # path(r'^docs/',include_docs_urls(title='My API title'))
     path('api/', include(router.urls)), # 加载前面配置的路由器
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # 获取 JWT token

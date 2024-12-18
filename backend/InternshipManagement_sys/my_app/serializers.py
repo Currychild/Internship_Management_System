@@ -1,8 +1,11 @@
 # 序列化器
 import base64
 from random import choices
+from typing import Dict, Any
 
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, AuthUser
+from rest_framework_simplejwt.tokens import Token
 
 from .models import User, Teacher, Academy, Major, Class
 from .models import Student, Announcement, Company, CompanyTeacher
@@ -120,12 +123,32 @@ class IpWeeklySerializer(serializers.ModelSerializer):
 
 #详细功能区分：
 
-#登录信息匹配序列化器
-class LoginSerializer(serializers.Serializer):
-    u_id = serializers.IntegerField(label='用户ID')
-    u_password = serializers.CharField(max_length=20, label='密码')
-    u_type = serializers.IntegerField(label='用户类型', allow_null=True)
+# 重写 TokenObtainPairSerializer
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
-    class Meta:
-        model = User
-        fields = ['u_id','u_password','u_type']
+    @classmethod
+    def get_token(cls, user):
+        """payload里面添加数据"""
+        token = super().get_token(user)
+        #添加信息
+        token['u_id'] = user.u_id
+        # token['username'] = user.username
+        token['u_type'] = user.u_type
+        return token
+
+    # 重写Token方法
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        user = self.user
+        #添加额外的返回信息给前端用于扔着
+        data['u_id'] = user.u_id
+        data['username'] = user.username
+        data['u_type'] = user.u_type
+        return data
+
+#登录信息匹配序列化器
+# class LoginSerializer(serializers.ModelSerializer):
+#     "登录序列化器"
+#     class Meta:
+#         model = User
+#         fields = ['u_id', 'u_type']  # 只返回 u_id 和 u_type
