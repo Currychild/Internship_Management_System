@@ -14,11 +14,14 @@ from pathlib import Path
 
 from tutorial.settings import BASE_DIR
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 #注册自定义用户模型，格式：“应用名.模型类名”
 AUTH_USER_MODEL = 'my_app.User'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -44,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    # 'my_app',
+    #'my_app',
     #'users',
 ]
 
@@ -130,6 +133,8 @@ from datetime import  timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # 设置 token 的有效期
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    # 通过自定义用户模型，告知simplejwt使用 u_id 作为用户的 ID 字段
+    'USER_ID_FIELD': 'u_id',
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
 }

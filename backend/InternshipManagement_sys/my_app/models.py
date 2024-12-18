@@ -1,13 +1,74 @@
+from django.contrib.auth.models import BaseUserManager
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 # from users.models import User
 # Create your models here.
 # Academy Model (for the 'academy' table)
 
+# 重写manager
+class UserManager(BaseUserManager):
+    def create_user(self, u_tel, password=None, u_type=1, u_photo=None):
+        """
+        创建一个普通用户
+        """
+        if not u_tel:
+            raise ValueError('用户必须提供电话')
+
+        # 创建用户对象
+        user = self.model(
+            u_tel=u_tel,
+            u_type=u_type,
+            u_photo=u_photo,
+        )
+
+        # 如果没有提供密码，则使用默认密码
+        if password:
+            user.set_password(password)  # 设置密码
+        else:
+            user.set_password('1234567')  # 使用默认密码
+
+        user.save(using=self._db)  # 保存到数据库
+
+        # 自动生成 username
+        self._generate_username(user)
+
+        return user
+
+    def create_superuser(self, u_tel, password=None, u_type=0, u_photo=None):
+        """
+        创建超级管理员用户
+        """
+        user = self.create_user(
+            u_tel=u_tel,
+            password=password,
+            u_type=u_type,
+            u_photo=u_photo,
+        )
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+
+        return user
+
+    def _generate_username(self, user):
+        """
+        根据 u_type 和 u_id 自动生成 username
+        """
+        if user.u_type == 0:  # 管理员
+            user.username = f'admin{user.u_id}'
+        elif user.u_type == 1:  # 学生
+            user.username = f'student{user.u_id}'
+        elif user.u_type == 2:  # 班主任
+            user.username = f'teacher{user.u_id}'
+        elif user.u_type == 3:  # 企业导师
+            user.username = f'Cteacher{user.u_id}'
+
+        user.save(using=self._db)  # 保存更新后的 username
+
 # 用户表 User Model
 #注释的为AbstractUser默认属性
 class User(AbstractUser):
-    u_id = models.IntegerField(primary_key=True, verbose_name='用户ID')
+    u_id = models.AutoField(primary_key=True, verbose_name='用户ID')
     # username = models.USERNMEE(max_length=20, verbose_name='用户名（姓名）')
     # password = models.CharField(max_length=20, default='123456', verbose_name='密码')
     u_type = models.IntegerField(verbose_name='用户类型', choices=[(0, '管理员'), (1, '学生'), (2, '班主任'), (3, '企业导师')])
@@ -15,10 +76,14 @@ class User(AbstractUser):
     u_photo = models.BinaryField(null=True, blank=True, verbose_name='照片')
     # is_active = models.IntegerField(default=0, verbose_name='激活状态，0为未激活，1为已激活')
 
+    objects = UserManager()
+
     class Meta:
         db_table = 'user'
         verbose_name = '用户'
         verbose_name_plural = '用户'
+
+
 
 
 # 学生表 Student Model
