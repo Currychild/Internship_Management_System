@@ -84,8 +84,6 @@ class User(AbstractUser):
         verbose_name_plural = '用户'
 
 
-
-
 # 学生表 Student Model
 class Student(models.Model):
     s_id = models. OneToOneField('User', on_delete=models.CASCADE, verbose_name='学生ID', primary_key=True)
@@ -114,7 +112,9 @@ class Teacher(models.Model):
 # 企业表 Company Model
 class Company(models.Model):
     co_id = models.IntegerField(primary_key=True, verbose_name='企业ID')
-    co_contacts_id = models.ForeignKey('CompanyTeacher',on_delete=models.CASCADE,verbose_name='企业联系人ID',null=True, blank=True)
+    #co_contacts_id = models.ForeignKey('CompanyTeacher',on_delete=models.CASCADE,verbose_name='企业联系人ID',null=True, blank=True)
+    #企业联系人不一定是企业老师，这里进行修改
+    co_contacts = models.CharField(max_length=20, verbose_name='企业联系人')
     co_name = models.CharField(max_length=20, verbose_name='企业名称')
     co_address = models.CharField(max_length=45, verbose_name='企业地址')
     co_scale = models.IntegerField(verbose_name='企业规模')
@@ -141,7 +141,9 @@ class CompanyTeacher(models.Model):
 # 学院表 Academy Model
 class Academy(models.Model):
     a_id = models.IntegerField(primary_key=True, verbose_name='院系ID')
-    a_dean_id = models.ForeignKey('Teacher',on_delete=models.CASCADE,verbose_name='院长ID',null=True, blank=True)
+    #a_dean_id = models.ForeignKey('Teacher',on_delete=models.CASCADE,verbose_name='院长ID',null=True, blank=True)
+    #院长不一定是老师，这里进行修改
+    a_dean = models.CharField(max_length=20, verbose_name='院长')
     a_name = models.CharField(max_length=20, verbose_name='院系名称')
     a_profile = models.CharField(max_length=255, verbose_name='院系简介')
     a_establishdate = models.DateField(verbose_name='成立日期')
@@ -193,8 +195,6 @@ class Class(models.Model):
 # 实习活动表 IpActivity Model
 class IpActivity(models.Model):
     act_id = models.IntegerField(primary_key=True, verbose_name='实习活动ID')
-    c_id = models.ForeignKey('Class', on_delete=models.CASCADE, verbose_name='班级ID', null=True, blank=True)
-    co_id = models.ForeignKey('Company', on_delete=models.CASCADE, verbose_name='企业ID',null=True, blank=True)
     act_name = models.CharField(max_length=255, verbose_name='实习活动名称')
     act_description = models.CharField(max_length=255, verbose_name='实习活动描述')
     act_begindate = models.DateField(verbose_name='实习开始日期')
@@ -205,6 +205,21 @@ class IpActivity(models.Model):
         db_table = 'ip_activity'
         verbose_name = '实习活动'
         verbose_name_plural = '实习活动'
+
+
+# 实习活动与班级对应表 IpActivityClass Model
+class IpActivityClass(models.Model):
+    act_id = models.ForeignKey('IpActivity', on_delete=models.CASCADE, verbose_name='实习活动ID')
+    c_id = models.ForeignKey('Class', on_delete=models.CASCADE, verbose_name='班级ID')
+
+    class Meta:
+        db_table = 'ip_activity_class'
+        verbose_name = '实习活动班级对应表'
+        verbose_name_plural = '实习活动班级对应表'
+        unique_together = ('act_id', 'c_id')  # 保证同一班级与同一实习活动的组合唯一
+
+    def __str__(self):
+        return f'{self.act_id.act_name} - {self.c_id.name}'
 
 
 # 实习岗位表 IpJob Model
@@ -255,6 +270,7 @@ class IpWeekly(models.Model):
     t_comment = models.CharField(max_length=255, null=True, blank=True, verbose_name='校内导师评语')
     cot_comment = models.CharField(max_length=255, null=True, blank=True, verbose_name='企业导师评语')
     w_status = models.IntegerField(verbose_name='评阅状态')
+
 
 # 实习总结表 IpSummary Model
 class IpSummary(models.Model):
